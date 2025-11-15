@@ -124,9 +124,6 @@ class PesaChapchapBot:
         ]
         return InlineKeyboardMarkup(keyboard)
 
-    # ... [REST OF YOUR CODE REMAINS EXACTLY THE SAME - JUST THE TOKEN HANDLING CHANGED]
-    # Include all your existing methods here (they don't need to change)
-
     async def send_response(self, update: Update, text: str):
         """Send response handling both message and callback query contexts"""
         if update.message:
