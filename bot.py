@@ -492,3 +492,32 @@ Or <b>/urgent</b> for 30-minute approval!
 if __name__ == "__main__":
     bot = PesaChapchapBot()
     bot.run()
+
+# Add this at the very bottom of the file, before the if __name__ block
+import threading
+import requests
+import os
+
+def keep_alive():
+    """Ping the bot periodically to prevent sleeping"""
+    while True:
+        try:
+            # Get the Render URL (will be set after deployment)
+            url = os.getenv('RENDER_EXTERNAL_URL') 
+            if url:
+                requests.get(url, timeout=10)
+                print(f"Keep-alive ping to {url}")
+            time.sleep(300)  # Ping every 5 minutes
+        except Exception as e:
+            print(f"Keep-alive error: {e}")
+            time.sleep(300)
+
+# Start keep-alive in background when bot starts
+if __name__ == "__main__":
+    # Start keep-alive thread
+    keep_alive_thread = threading.Thread(target=keep_alive, daemon=True)
+    keep_alive_thread.start()
+    
+    # Start your bot
+    bot = PesaChapchapBot()
+    bot.run()
