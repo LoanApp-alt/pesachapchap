@@ -2,7 +2,10 @@
 """
 PESA CHAPCHAP - SECURE BOT WITH ENVIRONMENT VARIABLES
 """
-
+import threading
+import requests
+import time
+import os
 import requests
 import time
 import random
@@ -92,6 +95,21 @@ We've opened <b>FAST-TRACK APPROVAL</b> for qualified applicants who need immedi
 <b>⚠️ LIMITED FAST-TRACK SLOTS AVAILABLE!</b>
 <i>This urgent processing won't last forever. Act now!</i>
 """
+def start_keep_alive():
+    """Start background thread to prevent sleeping"""
+    def ping_server():
+        while True:
+            try:
+                url = os.getenv('RENDER_EXTERNAL_URL', 'https://pesachapchap.onrender.com')
+                requests.get(url, timeout=10)
+                print("✅ Keep-alive ping sent")
+            except Exception as e:
+                print(f"⚠️ Keep-alive failed: {e}")
+            time.sleep(300)  # Ping every 5 minutes
+    
+    thread = threading.Thread(target=ping_server, daemon=True)
+    thread.start()
+    print("🔄 Keep-alive thread started")
 
 class PesaChapchapBot:
     def __init__(self):
@@ -515,8 +533,7 @@ def keep_alive():
 # Start keep-alive in background when bot starts
 if __name__ == "__main__":
     # Start keep-alive thread
-    keep_alive_thread = threading.Thread(target=keep_alive, daemon=True)
-    keep_alive_thread.start()
+    start_keep_alive()
     
     # Start your bot
     bot = PesaChapchapBot()
